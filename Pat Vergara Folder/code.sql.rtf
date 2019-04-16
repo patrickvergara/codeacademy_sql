@@ -1,0 +1,53 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1671\cocoasubrtf200
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 SELECT * \
+FROM quiz\
+LIMIT 5;\
+\
+SELECT * \
+FROM home_try_on\
+LIMIT 5;\
+\
+SELECT * \
+FROM home_try_on\
+LIMIT 5;\
+\
+SELECT question,\
+COUNT(DISTINCT user_id) AS \'91num_users\'92\
+FROM survey\
+GROUP BY 1;\
+\
+SELECT COUNT(DISTINCT q.user_id) AS 'Quiz Takers', COUNT(DISTINCT h.user_id) AS 'Tried On At Home', COUNT(DISTINCT p.user_id) AS 'Purchased'\
+FROM quiz 'q'\
+LEFT JOIN home_try_on AS 'h' \
+ON q.user_id = h.user_id\
+LEFT JOIN purchase AS 'p' \
+ON p.user_id = q.user_id;\
+\
+WITH ab_test AS (SELECT q.user_id, t.user_id IS NOT NULL AS 'is_home_try_on', t.number_of_pairs, p.user_id IS NOT NULL AS 'is_purchase'\
+FROM quiz AS 'q'\
+LEFT JOIN home_try_on AS 't' on q.user_id = t.user_id\
+LEFT JOIN purchase AS 'p' on p.user_id = q.user_id)\
+SELECT 1.0 * COUNT(DISTINCT CASE WHEN number_of_pairs = '3 pairs' AND is_purchase = 1 THEN user_id END) / \
+COUNT(DISTINCT CASE WHEN number_of_pairs = '3 pairs' THEN user_id END) AS 'three_pair_purchase',\
+1.0 * COUNT(DISTINCT CASE WHEN number_of_pairs = '5 pairs' AND is_purchase = 1 THEN user_id END) / COUNT(DISTINCT CASE WHEN number_of_pairs = '5 pairs' THEN user_id END) AS 'five_pair_purchase'\
+FROM ab_test;\
+\
+SELECT COUNT(DISTINCT style)\
+FROM purchase;\
+\
+SELECT COUNT(CASE WHEN product_id = 1 THEN user_id END) AS 'p_id_one', COUNT(CASE WHEN product_id = 2 THEN user_id END) AS 'p_id_two', COUNT(CASE WHEN product_id = 3 THEN user_id END) AS 'p_id_three', COUNT(CASE WHEN product_id = 4 THEN user_id END) AS 'p_id_four', COUNT(CASE WHEN product_id = 5 THEN user_id END) AS 'p_id_five', COUNT(CASE WHEN product_id = 6 THEN user_id END) AS 'p_id_six', COUNT(CASE WHEN product_id = 7 THEN user_id END) AS 'p_id_seven', COUNT(CASE WHEN product_id = 8 THEN user_id END) AS 'p_id_eight', COUNT(CASE WHEN product_id = 9 THEN user_id END) AS 'p_id_nine'\
+FROM purchase;\
+\
+SELECT COUNT(DISTINCT purchase.user_id), COUNT(DISTINCT home_try_on.address)\
+FROM purchase INNER JOIN home_try_on ON purchase.user_id = home_try_on.user_id;\
+\
+SELECT DISTINCT color\
+FROM purchase;\
+\
+WITH color_test AS (SELECT }
